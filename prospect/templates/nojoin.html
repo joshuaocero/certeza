@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You</title>
+  <link href="{% static 'prospect/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <img src="{% static '/images/certeza.png' %}" alt="Certeza">
+      </div>
+
+      <!-- Success Icon -->
+      <div class="success-icon">✓</div>
+
+      <!-- Message -->
+      <h1>We understand!</h1>
+
+      Would you still like to access our online discipleship course?
+
+
+      <!-- Optional action -->
+      <div class="actions">
+        <a href="{% url 'prospect:prospect_final_success' prospect_form_id %}">Not Now</a>
+        <a href="{% url 'prospect:prospect_join_self_study' prospect_form_id %}">Yes, Of course</a>
+      </div>
+
+    </div>
+
+    <footer>
+      © 2026 Certeza · All rights reserved
+    </footer>
+  </div>
+</body>
+</html>

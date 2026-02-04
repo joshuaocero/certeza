@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You</title>
+  <link href="{% static 'prospect/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <img src="{% static '/images/certeza.png' %}" alt="Certeza">
+      </div>
+
+      <!-- Success Icon -->
+      <div class="success-icon">✓</div>
+
+      <!-- Message -->
+      <h1>Great!</h1>
+      <p>
+        Click the button below to open our discipleship self-study material.
+      </p>
+
+      <!-- Optional action -->
+      <div class="actions">
+        <a href="#">Open</a>
+      </div>
+
+    </div>
+
+    <footer>
+      © 2026 Your Organization · All rights reserved
+    </footer>
+  </div>
+</body>
+</html>

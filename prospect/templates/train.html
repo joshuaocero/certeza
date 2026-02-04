@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Questionnaire</title>
+  <link href="{% static 'prospect/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <img src="{% static '/images/certeza.png' %}" alt="Certeza">
+      </div>
+
+      <!-- Header -->
+      <header>
+        <h1>Discipleship Program</h1>
+        <p>Tell us a bit about yourself so we can get in touch.</p>
+      </header>
+
+      <!-- Form -->
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="Your name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="text" placeholder="+256 709 123456">
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+
+    </div>
+
+    <footer>
+      © 2026 Certeza · All rights reserved
+    </footer>
+  </div>
+</body>
+</html>

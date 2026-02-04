@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thank You</title>
+  <link href="{% static 'prospect/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <img src="{% static '/images/certeza.png' %}" alt="Certeza">
+      </div>
+
+      <!-- Success Icon -->
+      <div class="success-icon">✓</div>
+
+      <!-- Message -->
+      <h1>Thank you!</h1>
+      <p>
+        Your response has been successfully submitted.
+        We appreciate you taking the time to complete the questionnaire.
+      </p>
+
+      Would you like to join our discipleship program?
+
+
+      <!-- Optional action -->
+      <div class="actions">
+        <a href="{% url 'prospect:prospect_no_join' prospect_form_id %}">Not Now</a>
+        <a href="{% url 'prospect:prospect_join' prospect_form_id %}">Yes, Of course</a>
+      </div>
+
+    </div>
+
+    <footer>
+      © 2026 Your Organization · All rights reserved
+    </footer>
+  </div>
+</body>
+</html>

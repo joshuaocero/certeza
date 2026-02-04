@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Questionnaire</title>
+  <link href="{% static 'prospect/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+
+      <!-- Logo -->
+      <div class="logo">
+        <img src="{% static '/images/certeza.png' %}" alt="Certeza">
+      </div>
+
+      <!-- Header -->
+      <header>
+        <h1>{{ questionnaire.title }}</h1>
+        <p>{{ questionnaire.description }}</p>
+      </header>
+
+      <!-- Form -->
+      <form method="POST" action="{% url 'prospect:prospect_form_submit' questionnaire.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="new_form_id" value="{{ new_form_id }}">
+
+        {% for question in questions %}
+          <div class="form-group">
+            <label for="question_{{ question.id }}">{{ question.text }}</label>
+            {% if question.type == 'text' %}
+              <input id="question_{{ question.id }}" type="text" name="question_{{ question.id }}">
+            {% elif question.type == 'select' %}
+              <select id="question_{{ question.id }}" name="question_{{ question.id }}">
+                <option value="">Select an option</option>
+                {% for option in question.options.all %}
+                  <option value="{{ option.value }}">{{ option.text }}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <footer>
+      © 2026 Certeza · All rights reserved
+    </footer>
+  </div>
+</body>
+</html>
