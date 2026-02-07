@@ -49,13 +49,3 @@ class QuestionnaireLog(models.Model):
 
     def __str__(self):
         return "Log for %s at %s" % (self.form_id, self.timestamp)
-
-class Prospect(models.Model):
-    name = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    prospect_form_id = models.CharField(max_length=100, unique=True)
-    joined_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name

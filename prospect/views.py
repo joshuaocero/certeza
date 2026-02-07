@@ -1,19 +1,24 @@
 import uuid
 
 from django.shortcuts import render
-from .models import Questionnaire, Question, Responses, QuestionnaireLog, Prospect
+from .models import Questionnaire, Question, Responses, QuestionnaireLog
 
 def prospect_form(request, questionnaire_id=None):
     if request.method == 'GET' and questionnaire_id:
-        questionnaire = Questionnaire.objects.get(id=questionnaire_id) if questionnaire_id else None
-        questions = questionnaire.questions.all() if questionnaire else []
+        active_questionnaire = organisation.ActiveQuestionnaire.objects.get(id=questionnaire_id)
 
-        new_form_id = uuid.uuid4().hex.upper() if questionnaire else None
+        if not active_questionnaire or not active_questionnaire.is_active:
+            return render(request, 'error.html', {'message': 'Questionnaire not found or not active'})
+
+        questionnaire = active_questionnaire.questionnaire
+        questions = questionnaire.questions.all()
+
+        new_form_id = uuid.uuid4().hex.upper()
 
         log = QuestionnaireLog.objects.create(
-            form_id=new_form_id,
+            form_id="{}-{}".format(new_form_id, active_questionnaire.id),
             action='form_viewed'
-        ) if questionnaire else None
+        )
         log.save()
 
         context = {
@@ -72,13 +77,13 @@ def prospect_join(request, prospect_form_id=None):
             action='prospect_signed_up',
         )
         log.save()
-        p = Prospect.objects.create(
-            name=request.POST.get('name'),
-            email=request.POST.get('email'),
-            phone_number=request.POST.get('phone'),
-            prospect_form_id=prospect_form_id,
-        )
-        p.save()
+        # p = Prospect.objects.create(
+        #     name=request.POST.get('name'),
+        #     email=request.POST.get('email'),
+        #     phone_number=request.POST.get('phone'),
+        #     prospect_form_id=prospect_form_id,
+        # )
+        # p.save()
         return render(request, 'success.html', {'prospect_form_id': prospect_form_id})
     return render(request, 'error.html', {'message': 'Invalid request'})
 

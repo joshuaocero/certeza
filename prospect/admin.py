@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Questionnaire, Question, SelectOption, Responses, QuestionnaireLog, Prospect
+from .models import Questionnaire, Question, SelectOption, Responses, QuestionnaireLog
 
 
 # class SelectOptionInline(admin.TabularInline):
@@ -19,4 +19,3 @@ admin.site.register(Questionnaire)
 admin.site.register(Question)
 admin.site.register(SelectOption)
 admin.site.register(Responses)
-admin.site.register(Prospect)
