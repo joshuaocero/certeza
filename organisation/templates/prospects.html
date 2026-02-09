@@ -1,0 +1,776 @@
+{% extends "base.html" %}
+
+{% block title %}Prospects - Certeza{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--blue);
+        font-size: 36px;
+    }
+
+    .page-header p {
+        color: var(--gray);
+        margin: 0;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    .search-btn {
+        padding: 12px 20px;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .search-btn:hover {
+        background: #1557b0;
+    }
+
+    .clear-btn {
+        padding: 12px 20px;
+        background: #f3f4f6;
+        color: var(--gray);
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+        background: #e5e7eb;
+    }
+
+    /* TABS */
+    .tabs-container {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab {
+        padding: 12px 0;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--gray);
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        position: relative;
+        bottom: -2px;
+    }
+
+    .tab:hover {
+        color: #1f2937;
+    }
+
+    .tab.active {
+        color: var(--blue);
+        border-bottom-color: var(--blue);
+    }
+
+    .tab-count {
+        background: #f3f4f6;
+        color: var(--gray);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        margin-left: 8px;
+    }
+
+    /* TABLE */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .prospects-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .prospects-table thead {
+        background: #f9fafb;
+    }
+
+    .prospects-table th {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .prospects-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+
+    .prospects-table tbody tr {
+        transition: background 0.2s;
+    }
+
+    .prospects-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .prospects-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* TABLE COLUMNS */
+    .prospect-name {
+        font-weight: 600;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .prospect-icon {
+        font-size: 18px;
+        color: var(--blue);
+    }
+
+    .prospect-email {
+        color: var(--gray);
+        word-break: break-word;
+    }
+
+    .prospect-phone {
+        color: var(--gray);
+        font-family: monospace;
+    }
+
+    .discipler-badge {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .unassigned-badge {
+        display: inline-block;
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* ASSIGN FORM */
+    .assign-container {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .discipler-select {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #1f2937;
+        background: white;
+        cursor: pointer;
+    }
+
+    .discipler-select:focus {
+        outline: none;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    .assign-btn {
+        padding: 8px 12px;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 13px;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+    .assign-btn:hover {
+        background: #1557b0;
+    }
+
+    .assign-btn:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+    }
+
+    /* DATE FORMATTING */
+    .date-cell {
+        color: var(--gray);
+        font-size: 13px;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1f2937;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+    }
+
+    /* PAGINATION */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .pagination-link {
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        color: var(--blue);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .pagination-link:hover {
+        background: #f3f4f6;
+        border-color: var(--blue);
+    }
+
+    .pagination-link.active {
+        background: var(--blue);
+        color: white;
+        border-color: var(--blue);
+    }
+
+    .pagination-link.disabled {
+        color: #d1d5db;
+        cursor: not-allowed;
+        border-color: #e5e7eb;
+    }
+
+    .pagination-info {
+        color: var(--gray);
+        font-size: 13px;
+        margin: 0 16px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 12px;
+        padding: 32px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #1f2937;
+    }
+
+    .modal-content {
+        margin-bottom: 24px;
+    }
+
+    .modal-content p {
+        color: var(--gray);
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .modal-select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #1f2937;
+        background: white;
+        cursor: pointer;
+    }
+
+    .modal-select:focus {
+        outline: none;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .modal-btn-cancel {
+        background: #f3f4f6;
+        color: var(--gray);
+    }
+
+    .modal-btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .modal-btn-confirm {
+        background: var(--blue);
+        color: white;
+    }
+
+    .modal-btn-confirm:hover {
+        background: #1557b0;
+    }
+
+    .modal-btn-confirm:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+    }
+
+    /* ALERT */
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+    }
+
+    .alert i {
+        font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 24px;
+        }
+
+        .search-bar {
+            flex-direction: column;
+        }
+
+        .prospects-table {
+            font-size: 12px;
+        }
+
+        .prospects-table th,
+        .prospects-table td {
+            padding: 10px 8px;
+        }
+
+        .assign-container {
+            flex-direction: column;
+        }
+
+        .discipler-select,
+        .assign-btn {
+            width: 100%;
+        }
+
+        .tabs-container {
+            gap: 12px;
+        }
+
+        .tab {
+            font-size: 14px;
+        }
+
+        .modal {
+            width: 95%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        <i class="fas fa-users"></i>
+        Prospects
+    </h1>
+    <p>Manage and assign prospects to disciplers</p>
+</div>
+
+<!-- SEARCH & FILTERS -->
+<form method="GET" class="search-bar">
+    <input 
+        type="text" 
+        name="search" 
+        class="search-input" 
+        placeholder="Search by name, email, phone, or form ID..." 
+        value="{{ search_query }}"
+    >
+    <button type="submit" class="search-btn">
+        <i class="fas fa-search"></i> Search
+    </button>
+    {% if search_query %}
+    <a href="?tab={{ tab }}" class="clear-btn">
+        <i class="fas fa-times"></i> Clear
+    </a>
+    {% endif %}
+</form>
+
+<!-- TABS -->
+<div class="tabs-container">
+    <a href="?tab=all{% if search_query %}&search={{ search_query }}{% endif %}" class="tab {% if tab == 'all' %}active{% endif %}">
+        <i class="fas fa-list"></i> All Prospects
+        <span class="tab-count">{{ all_count }}</span>
+    </a>
+    <a href="?tab=assigned{% if search_query %}&search={{ search_query }}{% endif %}" class="tab {% if tab == 'assigned' %}active{% endif %}">
+        <i class="fas fa-user-check"></i> Assigned
+        <span class="tab-count">{{ assigned_count }}</span>
+    </a>
+    <a href="?tab=unassigned{% if search_query %}&search={{ search_query }}{% endif %}" class="tab {% if tab == 'unassigned' %}active{% endif %}">
+        <i class="fas fa-user-slash"></i> Unassigned
+        <span class="tab-count">{{ unassigned_count }}</span>
+    </a>
+</div>
+
+{% if prospects %}
+<!-- PROSPECTS TABLE -->
+<div class="table-container">
+    <table class="prospects-table">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user"></i> Name</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
+                <th><i class="fas fa-phone"></i> Phone</th>
+                <th><i class="fas fa-id-card"></i> Form ID</th>
+                <th><i class="fas fa-user-tie"></i> Discipler</th>
+                <th><i class="fas fa-calendar"></i> Joined</th>
+                {% if tab == 'unassigned' %}<th><i class="fas fa-cog"></i> Action</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for prospect in prospects %}
+            <tr>
+                <td>
+                    <div class="prospect-name">
+                        <i class="fas fa-circle prospect-icon"></i>
+                        {{ prospect.name }}
+                    </div>
+                </td>
+                <td class="prospect-email">{{ prospect.email }}</td>
+                <td class="prospect-phone">{{ prospect.phone_number|default:"N/A" }}</td>
+                <td>
+                    <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                        {{ prospect.prospect_form_id }}
+                    </code>
+                </td>
+                <td>
+                    {% if prospect.discipler %}
+                    <span class="discipler-badge">
+                        <i class="fas fa-check-circle"></i>
+                        {{ prospect.discipler.user.first_name }} {{ prospect.discipler.user.last_name }}
+                    </span>
+                    {% else %}
+                    <span class="unassigned-badge">
+                        <i class="fas fa-times-circle"></i>
+                        Unassigned
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="date-cell">{{ prospect.created_at|date:"M d, Y" }}</td>
+                {% if tab == 'unassigned' %}
+                <td>
+                    <button class="assign-btn" onclick="openAssignModal({{ prospect.id }}, '{{ prospect.name }}')">
+                        <i class="fas fa-link"></i> Assign
+                    </button>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- PAGINATION -->
+{% if page_obj.has_other_pages %}
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+    <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}&tab={{ tab }}" class="pagination-link">
+        <i class="fas fa-chevron-left"></i> First
+    </a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&tab={{ tab }}" class="pagination-link">
+        <i class="fas fa-chevron-left"></i> Previous
+    </a>
+    {% else %}
+    <span class="pagination-link disabled">
+        <i class="fas fa-chevron-left"></i> First
+    </span>
+    <span class="pagination-link disabled">
+        <i class="fas fa-chevron-left"></i> Previous
+    </span>
+    {% endif %}
+
+    <span class="pagination-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}&tab={{ tab }}" class="pagination-link">
+        Next <i class="fas fa-chevron-right"></i>
+    </a>
+    <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}&tab={{ tab }}" class="pagination-link">
+        Last <i class="fas fa-chevron-right"></i>
+    </a>
+    {% else %}
+    <span class="pagination-link disabled">
+        Next <i class="fas fa-chevron-right"></i>
+    </span>
+    <span class="pagination-link disabled">
+        Last <i class="fas fa-chevron-right"></i>
+    </span>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<!-- EMPTY STATE -->
+<div class="table-container">
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No Prospects Found</h3>
+        <p>
+            {% if search_query %}
+            No results match your search. Try a different query.
+            {% elif tab == 'assigned' %}
+            No assigned prospects yet.
+            {% elif tab == 'unassigned' %}
+            All prospects have been assigned to disciplers!
+            {% else %}
+            Get started by adding your first prospect.
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<!-- ASSIGNMENT MODAL -->
+<div id="assignModal" class="modal-overlay">
+    <div class="modal">
+        <h3><i class="fas fa-user-plus"></i> Assign Prospect</h3>
+        <div class="modal-content">
+            <p>Prospect: <strong id="prospectName"></strong></p>
+            <p>Select a discipler to assign:</p>
+            <select id="disciplerSelect" class="modal-select">
+                <option value="">-- Choose a discipler --</option>
+                {% for discipler in available_disciplers %}
+                <option value="{{ discipler.id }}">
+                    {{ discipler.user.first_name }} {{ discipler.user.last_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="modal-buttons">
+            <button class="modal-btn modal-btn-cancel" onclick="closeAssignModal()">Cancel</button>
+            <button class="modal-btn modal-btn-confirm" onclick="confirmAssignment()">Assign</button>
+        </div>
+    </div>
+</div>
+
+<!-- ALERTS -->
+<div id="alertContainer" style="position: fixed; top: 80px; right: 20px; z-index: 2000; max-width: 400px;"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentProspectId = null;
+
+    function openAssignModal(prospectId, prospectName) {
+        currentProspectId = prospectId;
+        document.getElementById('prospectName').textContent = prospectName;
+        document.getElementById('disciplerSelect').value = '';
+        document.getElementById('assignModal').classList.add('show');
+    }
+
+    function closeAssignModal() {
+        document.getElementById('assignModal').classList.remove('show');
+        currentProspectId = null;
+    }
+
+    function confirmAssignment() {
+        const disciplerId = document.getElementById('disciplerSelect').value;
+
+        if (!disciplerId) {
+            showAlert('Please select a discipler', 'error');
+            return;
+        }
+
+        const confirmBtn = event.target;
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Assigning...';
+
+        // Send AJAX request to assign prospect
+        fetch('{% url "organisation:assign_prospect" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `prospect_id=${currentProspectId}&discipler_id=${disciplerId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                closeAssignModal();
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showAlert(data.message, 'error');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = 'Assign';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred. Please try again.', 'error');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Assign';
+        });
+    }
+
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+               document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] ||
+               '';
+    }
+
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        alertContainer.appendChild(alert);
+
+        setTimeout(() => {
+            alert.remove();
+        }, 4000);
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('assignModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAssignModal();
+        }
+    });
+</script>
+{% endblock %}

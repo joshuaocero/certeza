@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% block title %}Survey Responses - Certeza{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--blue);
+        font-size: 36px;
+    }
+
+    .page-header p {
+        color: var(--gray);
+        margin: 0;
+    }
+
+    .header-stats {
+        display: flex;
+        gap: 16px;
+        margin-top: 16px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--gray);
+    }
+
+    .stat-number {
+        font-weight: 600;
+        color: var(--blue);
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    .search-btn {
+        padding: 12px 20px;
+        background: var(--blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .search-btn:hover {
+        background: #1557b0;
+    }
+
+    .clear-btn {
+        padding: 12px 20px;
+        background: #f3f4f6;
+        color: var(--gray);
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+        background: #e5e7eb;
+    }
+
+    /* TABLE */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .responses-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .responses-table thead {
+        background: #f9fafb;
+    }
+
+    .responses-table th {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .responses-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+
+    .responses-table tbody tr {
+        transition: background 0.2s;
+    }
+
+    .responses-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .responses-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* TABLE COLUMNS */
+    .form-id {
+        font-family: monospace;
+        background: #f3f4f6;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--blue);
+    }
+
+    .questionnaire-badge {
+        display: inline-block;
+        background: #eff6ff;
+        color: var(--blue);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .question-text {
+        color: #1f2937;
+        font-weight: 500;
+        max-width: 400px;
+    }
+
+    .answer-text {
+        color: var(--gray);
+        max-width: 500px;
+        word-break: break-word;
+    }
+
+    .answer-empty {
+        color: #d1d5db;
+        font-style: italic;
+    }
+
+    .date-cell {
+        color: var(--gray);
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    .empty-state h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1f2937;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+    }
+
+    /* PAGINATION */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .pagination-link {
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        color: var(--blue);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .pagination-link:hover {
+        background: #f3f4f6;
+        border-color: var(--blue);
+    }
+
+    .pagination-link.active {
+        background: var(--blue);
+        color: white;
+        border-color: var(--blue);
+    }
+
+    .pagination-link.disabled {
+        color: #d1d5db;
+        cursor: not-allowed;
+        border-color: #e5e7eb;
+    }
+
+    .pagination-info {
+        color: var(--gray);
+        font-size: 13px;
+        margin: 0 16px;
+    }
+
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 24px;
+        }
+
+        .header-stats {
+            flex-direction: column;
+        }
+
+        .search-bar {
+            flex-direction: column;
+        }
+
+        .responses-table {
+            font-size: 12px;
+        }
+
+        .responses-table th,
+        .responses-table td {
+            padding: 10px 8px;
+        }
+
+        .question-text,
+        .answer-text {
+            max-width: 250px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>
+        <i class="fas fa-poll"></i>
+        Survey Responses
+    </h1>
+    <p>View and search all survey responses from prospects</p>
+    <div class="header-stats">
+        <div class="stat-item">
+            <i class="fas fa-bars"></i>
+            Total Responses: <span class="stat-number">{{ total_responses }}</span>
+        </div>
+        {% if page_obj %}
+        <div class="stat-item">
+            <i class="fas fa-eye"></i>
+            Showing: <span class="stat-number">{{ responses|length }}</span> on this page
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- SEARCH -->
+<form method="GET" class="search-bar">
+    <input 
+        type="text" 
+        name="search" 
+        class="search-input" 
+        placeholder="Search by form ID, questionnaire, question, or answer..." 
+        value="{{ search_query }}"
+    >
+    <button type="submit" class="search-btn">
+        <i class="fas fa-search"></i> Search
+    </button>
+    {% if search_query %}
+    <a href="?" class="clear-btn">
+        <i class="fas fa-times"></i> Clear
+    </a>
+    {% endif %}
+</form>
+
+{% if responses %}
+<!-- RESPONSES TABLE -->
+<div class="table-container">
+    <table class="responses-table">
+        <thead>
+            <tr>
+                <th><i class="fas fa-id-card"></i> Form ID</th>
+                <th><i class="fas fa-poll-h"></i> Questionnaire</th>
+                <th><i class="fas fa-question-circle"></i> Question</th>
+                <th><i class="fas fa-comment"></i> Answer</th>
+                <th><i class="fas fa-calendar"></i> Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for response in responses %}
+            <tr>
+                <td>
+                    <span class="form-id">{{ response.prospect_form_id|default:"N/A" }}</span>
+                </td>
+                <td>
+                    <span class="questionnaire-badge">
+                        <i class="fas fa-file-alt"></i>
+                        {{ response.question.questionnaire.name }}
+                    </span>
+                </td>
+                <td>
+                    <div class="question-text">
+                        <i class="fas fa-circle" style="font-size: 6px; color: var(--blue); margin-right: 8px;"></i>
+                        {{ response.question.text|truncatewords:20 }}
+                    </div>
+                </td>
+                <td>
+                    <div class="answer-text">
+                        {% if response.answer_text %}
+                            {{ response.answer_text|truncatewords:30 }}
+                        {% else %}
+                            <span class="answer-empty">No answer provided</span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td class="date-cell">
+                    <i class="fas fa-clock"></i>
+                    {{ response.submitted_at|date:"M d, Y H:i" }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- PAGINATION -->
+{% if page_obj.has_other_pages %}
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+    <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link">
+        <i class="fas fa-chevron-left"></i> First
+    </a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link">
+        <i class="fas fa-chevron-left"></i> Previous
+    </a>
+    {% else %}
+    <span class="pagination-link disabled">
+        <i class="fas fa-chevron-left"></i> First
+    </span>
+    <span class="pagination-link disabled">
+        <i class="fas fa-chevron-left"></i> Previous
+    </span>
+    {% endif %}
+
+    <span class="pagination-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link">
+        Next <i class="fas fa-chevron-right"></i>
+    </a>
+    <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-link">
+        Last <i class="fas fa-chevron-right"></i>
+    </a>
+    {% else %}
+    <span class="pagination-link disabled">
+        Next <i class="fas fa-chevron-right"></i>
+    </span>
+    <span class="pagination-link disabled">
+        Last <i class="fas fa-chevron-right"></i>
+    </span>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<!-- EMPTY STATE -->
+<div class="table-container">
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No Responses Found</h3>
+        <p>
+            {% if search_query %}
+            No responses match your search. Try a different query.
+            {% else %}
+            No survey responses have been collected yet.
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

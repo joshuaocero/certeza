@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Certeza{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        margin-bottom: 40px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    /* STAT CARDS */
+    .stat-card {
+        background: white;
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+        font-size: 40px;
+        color: var(--blue);
+        min-width: 60px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--gray);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    .stat-number {
+        font-size: 36px;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: var(--blue);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: 8px;
+        cursor: help;
+    }
+
+    /* QUESTIONNAIRES SECTION */
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: var(--blue);
+        font-size: 24px;
+    }
+
+    .questionnaires-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .questionnaire-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid var(--blue);
+    }
+
+    .questionnaire-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .questionnaire-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1f2937;
+    }
+
+    .questionnaire-card p {
+        font-size: 13px;
+        color: var(--gray);
+        margin-bottom: 16px;
+    }
+
+    .response-stats {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .response-stat {
+        flex: 1;
+    }
+
+    .response-stat-label {
+        font-size: 12px;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .response-stat-number {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--blue);
+    }
+
+    /* FOLLOW-UPS SECTION */
+    .followups-list {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .followup-item {
+        padding: 20px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: background 0.2s;
+    }
+
+    .followup-item:hover {
+        background: #f9fafb;
+    }
+
+    .followup-item:last-child {
+        border-bottom: none;
+    }
+
+    .followup-icon {
+        font-size: 28px;
+        color: var(--yellow);
+        min-width: 45px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .followup-content {
+        flex: 1;
+    }
+
+    .followup-prospect {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 4px;
+    }
+
+    .followup-meta {
+        font-size: 13px;
+        color: var(--gray);
+    }
+
+    .followup-date {
+        font-size: 13px;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .questionnaires-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Home</h1>
+    <p style="color: var(--gray); margin: 0;">Welcome back! Here's an overview of your discipleship program.</p>
+</div>
+
+<!-- STAT CARDS GRID -->
+<div class="dashboard-grid">
+    <!-- PROSPECTS CARD -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Total Prospects</div>
+            <div class="stat-number">{{ total_prospects }}</div>
+            {% if new_prospects > 0 %}
+            <span class="stat-badge" 
+                  data-bs-toggle="tooltip" 
+                  data-bs-title="New prospects since last visit">
+                <i class="fas fa-star"></i> {{ new_prospects }} new
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- RESPONSES CARD -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-poll"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Total Responses</div>
+            <div class="stat-number">{{ total_responses }}</div>
+            {% if new_responses > 0 %}
+            <span class="stat-badge" 
+                  data-bs-toggle="tooltip" 
+                  data-bs-title="New responses since last visit">
+                <i class="fas fa-bell"></i> {{ new_responses }} new
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- DUE FOLLOW-UPS CARD -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clipboard-check"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Due Follow-Ups</div>
+            <div class="stat-number">{{ due_followups.count }}</div>
+            {% if due_followups.count > 0 %}
+            <span class="stat-badge" 
+                  data-bs-toggle="tooltip" 
+                  data-bs-title="Action required">
+                <i class="fas fa-exclamation-circle"></i> Action needed
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- QUESTIONNAIRES SECTION -->
+{% if questionnaire_data %}
+<div>
+    <div class="section-title">
+        <i class="fas fa-poll-h"></i>
+        Questionnaires
+    </div>
+    
+    {% if questionnaire_data %}
+    <div class="questionnaires-grid">
+        {% for q in questionnaire_data %}
+        <div class="questionnaire-card">
+            <h3><i class="fas fa-file-alt"></i> {{ q.title }}</h3>
+            <p>{{ q.name }}</p>
+            <div class="response-stats">
+                <div class="response-stat">
+                    <div class="response-stat-label">Total Responses</div>
+                    <div class="response-stat-number">{{ q.total_responses }}</div>
+                </div>
+                {% if q.new_responses > 0 %}
+                <div class="response-stat" 
+                     data-bs-toggle="tooltip" 
+                     data-bs-title="Responses since last visit">
+                    <div class="response-stat-label">New</div>
+                    <div class="response-stat-number" style="color: var(--yellow);">+{{ q.new_responses }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>No active questionnaires yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- DISCIPLESHIP FOLLOW-UPS SECTION -->
+<div>
+    <div class="section-title">
+        <i class="fas fa-tasks"></i>
+        Discipleship Follow-Ups Due
+    </div>
+    
+    {% if due_followups %}
+    <div class="followups-list">
+        {% for followup in due_followups %}
+        <div class="followup-item">
+            <div class="followup-icon">
+                <i class="fas fa-hourglass-end"></i>
+            </div>
+            <div class="followup-content">
+                <div class="followup-prospect">
+                    <i class="fas fa-user-circle"></i> {{ followup.prospect.name }}
+                </div>
+                <div class="followup-meta">
+                    <i class="fas fa-user-tie"></i> Discipler: <strong>{{ followup.discipler.user.first_name }} {{ followup.discipler.user.last_name }}</strong>
+                    {% if followup.notes %}
+                    <br><i class="fas fa-sticky-note"></i> {{ followup.notes|truncatewords:15 }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="followup-date">
+                <i class="fas fa-calendar-alt"></i>
+                {{ followup.follow_up_date|date:"M d, Y" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-check-circle"></i>
+        <p>No follow-ups due right now. Great job staying on track!</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

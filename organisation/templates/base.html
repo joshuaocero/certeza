@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Certeza{% endblock %}</title>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 3 (glyphicons only) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Popper and Bootstrap JS for tooltips -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+    <link href="{% static 'organisation/css/style.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<div class="navbar-custom">
+
+    <!-- LEFT NAV -->
+    <div class="nav-left">
+        <a class="nav-link {% if 'home' in request.path %}active{% endif %}" href="/organisation/home">Home</a>
+        <a class="nav-link {% if 'dashboard' in request.path %}active{% endif %}" href="/organisation/dashboard/">Dashboard</a>
+        <a class="nav-link {% if 'projects' in request.path %}active{% endif %}" href="/organisation/prospects/">Prospects</a>
+        <a class="nav-link {% if 'reports' in request.path %}active{% endif %}" href="/organisation/disciplers/">Disciplers</a>
+        <a class="nav-link {% if 'survey-responses' in request.path %}active{% endif %}" href="/organisation/survey-responses/">Survey Responses</a>
+    </div>
+
+    <!-- RIGHT NAV -->
+    <div class="nav-right">
+        <div class="icon-btn">
+            <span class="glyphicon glyphicon-bell"></span>
+        </div>
+        <div class="icon-btn">
+            <span class="glyphicon glyphicon-user"></span>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== PAGE LAYOUT ===== -->
+<div class="container-main">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        {% block left_sidebar %}{% endblock %}
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        {% block content %}
+        <h2>Welcome</h2>
+        <div class="card">Your content here</div>
+        {% endblock %}
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="sidebar">
+        {% block right_sidebar %}{% endblock %}
+    </div>
+
+</div>
+
+<script>
+    // Initialize all tooltips on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

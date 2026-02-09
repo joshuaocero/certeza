@@ -1,0 +1,728 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        margin-bottom: 40px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .dashboard-header p {
+        color: var(--gray);
+        margin: 0;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .grid-2col {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+
+    .grid-3col {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .grid-full {
+        grid-template-columns: 1fr;
+    }
+
+    /* STAT CARDS */
+    .stat-card {
+        background: white;
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+        font-size: 40px;
+        color: var(--blue);
+        min-width: 60px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: var(--gray);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .stat-subtext {
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 6px;
+    }
+
+    /* CHART CARDS */
+    .chart-card {
+        background: white;
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .chart-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1f2937;
+    }
+
+    .chart-title i {
+        color: var(--blue);
+        font-size: 20px;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pie-chart {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* RATIO CARD */
+    .ratio-card {
+        background: white;
+        padding: 28px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .ratio-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ratio-title i {
+        color: var(--blue);
+        font-size: 20px;
+    }
+
+    .ratio-display {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+
+    .ratio-item {
+        text-align: center;
+    }
+
+    .ratio-number {
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--blue);
+    }
+
+    .ratio-label {
+        font-size: 12px;
+        color: var(--gray);
+        text-transform: uppercase;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .ratio-arrow {
+        font-size: 24px;
+        color: #d1d5db;
+    }
+
+    .ratio-health {
+        padding: 12px 16px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    .ratio-health.healthy {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .ratio-health.overloaded {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* LINE CHART */
+    .line-chart {
+        width: 100%;
+        height: 300px;
+    }
+
+    /* TRAINING TABLE */
+    .training-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .training-table thead {
+        background: #f3f4f6;
+    }
+
+    .training-table th {
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        border: none;
+    }
+
+    .training-table td {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 14px;
+    }
+
+    .training-table tr:hover {
+        background: #f9fafb;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--blue);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1f2937;
+    }
+
+    .section-title i {
+        color: var(--blue);
+        font-size: 24px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .grid-2col,
+        .grid-3col {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-number {
+            font-size: 24px;
+        }
+
+        .ratio-display {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ratio-arrow {
+            transform: rotate(90deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+    <p>Complete overview of your discipleship program performance and metrics</p>
+</div>
+
+<!-- QUICK STATS ROW -->
+<div class="section-title">
+    <i class="fas fa-tachometer-alt"></i>
+    Quick Stats
+</div>
+
+<div class="dashboard-grid grid-3col">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-poll"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Avg Responses per Survey</div>
+            <div class="stat-number">{{ avg_responses_per_questionnaire }}</div>
+            <div class="stat-subtext"><i class="fas fa-info-circle"></i> across {{ total_questionnaires }} questionnaires</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Total Disciplers</div>
+            <div class="stat-number">{{ ratio_data.total_disciplers }}</div>
+            <div class="stat-subtext"><i class="fas fa-users"></i> {{ ratio_data.total_prospects }} prospects</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-label">Active Trainings</div>
+            <div class="stat-number">{{ training_data|length }}</div>
+            <div class="stat-subtext">with {{ total_trainees }} trainees</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CHARTS -->
+<div class="dashboard-grid grid-3col">
+    <!-- ACCEPTANCE RATE PIE CHART -->
+    <div class="chart-card">
+        <div class="chart-title">
+            <i class="fas fa-handshake"></i>
+            Prospect Acceptance Rate
+        </div>
+        <div class="chart-container">
+            <canvas id="acceptanceChart" class="pie-chart"></canvas>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <div style="font-size: 24px; font-weight: 600; color: var(--blue);">{{ acceptance_data.rate }}%</div>
+            <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">
+                <i class="fas fa-check-circle"></i> {{ acceptance_data.accepted }} accepted, 
+                <i class="fas fa-clock"></i> {{ acceptance_data.pending }} pending
+            </div>
+        </div>
+    </div>
+
+    <!-- ASSIGNMENT RATE PIE CHART -->
+    <div class="chart-card">
+        <div class="chart-title">
+            <i class="fas fa-user-check"></i>
+            Prospect Assignment Rate
+        </div>
+        <div class="chart-container">
+            <canvas id="assignmentChart" class="pie-chart"></canvas>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <div style="font-size: 24px; font-weight: 600; color: var(--blue);">{{ assignment_data.rate }}%</div>
+            <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">
+                <i class="fas fa-user-check"></i> {{ assignment_data.assigned }} assigned, 
+                <i class="fas fa-user-slash"></i> {{ assignment_data.unassigned }} unassigned
+            </div>
+        </div>
+    </div>
+
+    <!-- DISCIPLESHIP COMPLETION PIE CHART -->
+    <div class="chart-card">
+        <div class="chart-title">
+            <i class="fas fa-tasks"></i>
+            Discipleship Completion Rate
+        </div>
+        <div class="chart-container">
+            <canvas id="completionChart" class="pie-chart"></canvas>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <div style="font-size: 24px; font-weight: 600; color: var(--blue);">{{ discipleship_data.rate }}%</div>
+            <div style="font-size: 13px; color: var(--gray); margin-top: 4px;">
+                <i class="fas fa-flag-checkered"></i> {{ discipleship_data.completed }} completed
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SURVEY RESPONSES & RATIO -->
+<div class="dashboard-grid grid-2col">
+    <!-- SURVEY RESPONSES OVER PAST WEEK -->
+    <div class="chart-card">
+        <div class="chart-title">
+            <i class="fas fa-calendar-week"></i>
+            Survey Responses - Last 7 Days
+        </div>
+        <div class="chart-container">
+            <canvas id="responsesTrendChart" class="line-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- DISCIPLER-PROSPECT RATIO -->
+    <div class="ratio-card">
+        <div class="ratio-title">
+            <i class="fas fa-balance-scale"></i>
+            Discipler-Prospect Ratio
+        </div>
+        <div class="ratio-display">
+            <div class="ratio-item">
+                <div class="ratio-number">{{ ratio_data.current }}</div>
+                <div class="ratio-label">Current Ratio</div>
+            </div>
+            <div class="ratio-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="ratio-item">
+                <div class="ratio-number">{{ ratio_data.recommended }}</div>
+                <div class="ratio-label">Recommended</div>
+            </div>
+        </div>
+        <div class="ratio-health {{ ratio_data.health }}">
+            {% if ratio_data.health == 'healthy' %}
+            <i class="fas fa-check-circle"></i> Discipler ratio is healthy
+            {% else %}
+            <i class="fas fa-exclamation-circle"></i> Disciplers may be overloaded
+            {% endif %}
+        </div>
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 13px; color: var(--gray);">
+            <p style="margin: 0;">
+                <strong>{{ ratio_data.total_disciplers }}</strong> disciplers<br>
+                <strong>{{ ratio_data.total_prospects }}</strong> prospects
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- TRAINING COMPLETION RATES -->
+{% if training_data %}
+<div style="margin-top: 40px;">
+    <div class="section-title">
+        <i class="fas fa-school"></i>
+        Training Completion Rates
+    </div>
+    <div class="chart-card">
+        {% if training_data %}
+        <table class="training-table">
+            <thead>
+                <tr>
+                    <th>Training</th>
+                    <th style="width: 100px;">Trainees</th>
+                    <th style="width: 80px;">Completed</th>
+                    <th style="width: 150px;">Progress</th>
+                    <th style="width: 100px;">Completion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for training in training_data %}
+                <tr>
+                    <td>
+                        <i class="fas fa-book"></i> {{ training.name }}
+                    </td>
+                    <td>{{ training.total_trainees }}</td>
+                    <td>{{ training.completed }}</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ training.completion_rate }}%"></div>
+                        </div>
+                    </td>
+                    <td style="color: var(--blue); font-weight: 600;">{{ training.completion_rate }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>No training data available yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- DISCIPLESHIP STATUS BREAKDOWN -->
+<div style="margin-top: 40px;">
+    <div class="section-title">
+        <i class="fas fa-project-diagram"></i>
+        Discipleship Path Status Breakdown
+    </div>
+    <div class="dashboard-grid grid-2col">
+        <div class="chart-card">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                <div style="padding: 20px; background: #eff6ff; border-radius: 8px; border-left: 4px solid var(--blue);">
+                    <div style="font-size: 28px; font-weight: 600; color: var(--blue);">{{ discipleship_data.not_started }}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 4px; text-transform: uppercase; font-weight: 500;">Not Started</div>
+                </div>
+                <div style="padding: 20px; background: #fef3c7; border-radius: 8px; border-left: 4px solid var(--yellow);">
+                    <div style="font-size: 28px; font-weight: 600; color: #ca8a04;">{{ discipleship_data.in_progress }}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 4px; text-transform: uppercase; font-weight: 500;">In Progress</div>
+                </div>
+                <div style="padding: 20px; background: #fecaca; border-radius: 8px; border-left: 4px solid #dc2626;">
+                    <div style="font-size: 28px; font-weight: 600; color: #991b1b;">{{ discipleship_data.stalled }}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 4px; text-transform: uppercase; font-weight: 500;">Stalled</div>
+                </div>
+                <div style="padding: 20px; background: #dcfce7; border-radius: 8px; border-left: 4px solid #16a34a;">
+                    <div style="font-size: 28px; font-weight: 600; color: #166534;">{{ discipleship_data.completed }}</div>
+                    <div style="font-size: 12px; color: var(--gray); margin-top: 4px; text-transform: uppercase; font-weight: 500;">Completed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="fas fa-pie-chart"></i>
+                Distribution
+            </div>
+            <div class="chart-container">
+                <canvas id="statusDistributionChart" class="pie-chart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+    // Chart colors
+    const colors = {
+        blue: '#1a73e8',
+        yellow: '#fbbc05',
+        green: '#34a853',
+        red: '#ea4335',
+        gray: '#6b7280',
+        lightBlue: '#dbeafe'
+    };
+
+    // ACCEPTANCE RATE PIE CHART
+    const acceptanceCtx = document.getElementById('acceptanceChart').getContext('2d');
+    new Chart(acceptanceCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Accepted', 'Pending'],
+            datasets: [{
+                data: [{{ acceptance_data.accepted }}, {{ acceptance_data.pending }}],
+                backgroundColor: [colors.green, colors.lightBlue],
+                borderColor: 'white',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12 },
+                        color: colors.gray
+                    }
+                }
+            }
+        }
+    });
+
+    // ASSIGNMENT RATE PIE CHART
+    const assignmentCtx = document.getElementById('assignmentChart').getContext('2d');
+    new Chart(assignmentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Assigned', 'Unassigned'],
+            datasets: [{
+                data: [{{ assignment_data.assigned }}, {{ assignment_data.unassigned }}],
+                backgroundColor: [colors.blue, '#e5e7eb'],
+                borderColor: 'white',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12 },
+                        color: colors.gray
+                    }
+                }
+            }
+        }
+    });
+
+    // DISCIPLESHIP COMPLETION PIE CHART
+    const completionCtx = document.getElementById('completionChart').getContext('2d');
+    new Chart(completionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress'],
+            datasets: [{
+                data: [{{ discipleship_data.completed }}, {{ discipleship_data.in_progress }}],
+                backgroundColor: [colors.green, colors.yellow],
+                borderColor: 'white',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12 },
+                        color: colors.gray
+                    }
+                }
+            }
+        }
+    });
+
+    // SURVEY RESPONSES TREND LINE CHART
+    const dailyResponses = {{ daily_responses|safe }};
+    const responsesTrendCtx = document.getElementById('responsesTrendChart').getContext('2d');
+    new Chart(responsesTrendCtx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(dailyResponses),
+            datasets: [{
+                label: 'Survey Responses',
+                data: Object.values(dailyResponses),
+                borderColor: colors.blue,
+                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: colors.blue,
+                pointBorderColor: 'white',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        padding: 15,
+                        font: { size: 12 },
+                        color: colors.gray
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: colors.gray
+                    },
+                    grid: {
+                        color: '#e5e7eb'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: colors.gray
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // STATUS DISTRIBUTION PIE CHART
+    const statusCtx = document.getElementById('statusDistributionChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Not Started', 'In Progress', 'Stalled', 'Completed'],
+            datasets: [{
+                data: [
+                    {{ discipleship_data.not_started }},
+                    {{ discipleship_data.in_progress }},
+                    {{ discipleship_data.stalled }},
+                    {{ discipleship_data.completed }}
+                ],
+                backgroundColor: ['#dbeafe', colors.yellow, '#fecaca', colors.green],
+                borderColor: 'white',
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 12 },
+                        color: colors.gray
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
